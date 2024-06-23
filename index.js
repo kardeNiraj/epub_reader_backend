@@ -1,8 +1,11 @@
+import cookieParser from "cookie-parser"
 import cors from "cors"
 import "dotenv/config"
 import express from "express"
 import http from "http"
 import { mongooseConnection } from "./helpers/mongodb_helper.js"
+import bookRouter from "./routes/book.js"
+import userRouter from "./routes/user.js"
 
 const app = express()
 const server = http.Server(app)
@@ -10,11 +13,17 @@ const server = http.Server(app)
 app.use(cors({ origin: "*" }))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
+app.use(cookieParser())
+app.use("/files", express.static("files"))
 
 app.get("/", (req, res) => {
 	return res.send("server is ready to serve!")
 })
 
+app.use("/api/user", userRouter)
+app.use("/api/book", bookRouter)
+
+// running the server
 try {
 	const port = process.env.PORT || 8010
 	const db = await mongooseConnection()

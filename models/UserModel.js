@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-import { generatePublicId } from "../helpers"
+import { generatePublicId } from "../helpers/index.js"
 
 const UserSchema = new mongoose.Schema({
 	_id: { type: String, required: true, trim: true, default: generatePublicId },

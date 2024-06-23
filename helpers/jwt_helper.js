@@ -1,5 +1,7 @@
 import "dotenv/config"
-import { sign, verify } from "jsonwebtoken"
+import pkg from "jsonwebtoken"
+
+const { sign, verify } = pkg
 
 export function getJwt(data) {
 	try {
@@ -14,6 +16,7 @@ export function getJwt(data) {
 export async function verifyJwt(authorization) {
 	try {
 		const token = await verify(authorization, process.env.JWT_SECRET_KEY)
+		console.log(token)
 		return token
 	} catch (error) {
 		console.log("------------------------------------------------------------")
