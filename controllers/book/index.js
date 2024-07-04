@@ -17,7 +17,7 @@ import {
 export const createBook = async (req, res) => {
 	try {
 		const file = req?.file
-		if (!file) throw new CustomError("No book was uploaded")
+		if (!file) throw new CustomError("No book was sent")
 
 		const newBook = {
 			name: file?.originalname,

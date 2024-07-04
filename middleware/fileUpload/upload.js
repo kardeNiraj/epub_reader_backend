@@ -5,7 +5,10 @@ import { CustomError } from "../../helpers/custom_error.js"
 
 const storage = multer.diskStorage({
 	destination: (req, file, callback) => {
-		const path = `files/${req?.user?.created_at}_${req?.user?.name}/`
+		const path = `files/${req?.user?.created_at}_${req?.user?.name?.replace(
+			/ /g,
+			"_"
+		)}/`
 		fs.mkdirSync(path, { recursive: true })
 		callback(null, path)
 	},
