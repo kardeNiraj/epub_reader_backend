@@ -1,15 +1,15 @@
-const path = require("path")
-const webpackNodeExternals = require("webpack-node-externals")
-const Dotenv = require("dotenv-webpack")
+import Dotenv from "dotenv-webpack"
+import { resolve } from "path"
+import webpackNodeExternals from "webpack-node-externals"
 
-module.exports = {
-	entry: "./server.js",
+export default {
+	entry: "./index.js",
 	target: "node",
 	mode: "development",
 	externals: [webpackNodeExternals()],
 	output: {
 		filename: "index.js",
-		path: path.resolve(__dirname, "dist"),
+		path: resolve(process.cwd(), "dist"),
 	},
 	module: {
 		rules: [
