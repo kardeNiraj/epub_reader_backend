@@ -4,17 +4,30 @@
     {
       "src": "dist/index.js",
       "use": "@vercel/node",
-      "config": { "includeFiles": ["dist/**", "config/**", "logs/**"] }
+      "config": {
+        "includeFiles": ["dist/**", "config/**", "logs/**"]
+      }
     }
   ],
-  "rewrites": [{ "source": "/(.*)", "destination": "dist/index.js" }],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "dist/index.js"
+    }
+  ],
   "crons": [],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "Access-Control-Allow-Credentials", "value": "true" },
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        {
+          "key": "Access-Control-Allow-Credentials",
+          "value": "true"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
         {
           "key": "Access-Control-Allow-Methods",
           "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
