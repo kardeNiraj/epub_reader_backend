@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt"
 import crypto from "crypto"
-import "dotenv/config"
+import "dotenv/config.js"
 import { nanoid } from "nanoid"
 
 const key = Buffer.from(process.env.ENCRYPTION_SECRET, "hex")

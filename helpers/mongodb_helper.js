@@ -1,4 +1,4 @@
-import "dotenv/config"
+import "dotenv/config.js"
 import mongoose from "mongoose"
 
 export const mongooseConnection = async () => {

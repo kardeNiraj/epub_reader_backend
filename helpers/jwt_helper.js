@@ -1,4 +1,4 @@
-import "dotenv/config"
+import "dotenv/config.js"
 import pkg from "jsonwebtoken"
 
 const { sign, verify } = pkg
