@@ -3,9 +3,9 @@ import pkg from "jsonwebtoken"
 
 const { sign, verify } = pkg
 
-export function getJwt(data) {
+export function getJwt(data, options = {}) {
 	try {
-		return sign(data, process.env.JWT_SECRET_KEY)
+		return sign(data, process.env.JWT_SECRET_KEY, options)
 	} catch (error) {
 		console.log("------------------------------------------------------------")
 		console.log("Error while verifying JWT", error)

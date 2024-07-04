@@ -20,6 +20,10 @@ const UserSchema = new mongoose.Schema({
 	password: {
 		type: String,
 	},
+	otpSecret: {
+		type: Object,
+		default: null,
+	},
 	created_at: { type: String },
 	updated_at: { type: String },
 	isDeleted: { type: Boolean, default: false },

@@ -2,13 +2,17 @@ import { StatusCodes } from "http-status-codes"
 import { ValidationError } from "joi/lib/errors.js"
 import { CustomError } from "../../helpers/custom_error.js"
 import { getCurrentUnix } from "../../helpers/date_time_helper.js"
+import { mailHandler } from "../../helpers/email.js"
 import {
 	comparePassword,
+	decryptData,
 	encryptData,
+	generateSecret,
 	hashPassword,
 	responseGenerator,
 } from "../../helpers/index.js"
-import { getJwt } from "../../helpers/jwt_helper.js"
+import { getJwt, verifyJwt } from "../../helpers/jwt_helper.js"
+import { generateTOTP, verifyTotp } from "../../helpers/totp.js"
 import UserModel from "../../models/UserModel.js"
 import {
 	createUserValidation,
@@ -21,6 +25,125 @@ import {
 // forget password
 // method: POST
 // url: /api/user/forgetPassword
+export const generateForgetPasswordRequest = async (req, res) => {
+	try {
+		const userData = await UserModel.findOne({
+			email: req?.body?.email,
+			isDeleted: false,
+		})
+
+		if (!userData)
+			throw new CustomError(
+				`User with the given email or phone number does not exist`
+			)
+
+		const token = getJwt({ _id: userData._id }, { expiresIn: "60m" })
+		const encToken = encryptData(token)
+
+		const secret = generateSecret(32)
+		const { code, newOtpSecret } = generateTOTP(secret, "RESET_PASS")
+
+		// store OTP secret in DB
+		userData.otpSecret = newOtpSecret
+		userData.save()
+
+		mailHandler("RESET_PASS", {
+			otp: code,
+			email: req?.body?.email,
+		})
+
+		return res
+			.status(StatusCodes.OK)
+			.send(
+				responseGenerator(
+					{ token: encToken, otp: code },
+					StatusCodes.OK,
+					"Mail sent successfully",
+					1
+				)
+			)
+	} catch (error) {
+		if (error instanceof ValidationError || error instanceof CustomError) {
+			return res
+				.status(StatusCodes.BAD_REQUEST)
+				.send(responseGenerator({}, StatusCodes.BAD_REQUEST, error.message, 0))
+		}
+		console.error(error)
+		return res
+			.status(StatusCodes.INTERNAL_SERVER_ERROR)
+			.send(
+				responseGenerator(
+					{},
+					StatusCodes.INTERNAL_SERVER_ERROR,
+					"Internal Server Error",
+					0
+				)
+			)
+	}
+}
+
+// forget password
+// method: POST
+// url: /api/user/resetPassword
+export const validateForgetPasswordRequest = async (req, res) => {
+	try {
+		const { otp, token, new_password, compare_password } = req.body
+		const jwtToken = decryptData(token)
+		const tokenData = await verifyJwt(jwtToken)
+
+		if (tokenData?.exp < getCurrentUnix())
+			throw new CustomError("Token expired, please generate a new token")
+		const user = await UserModel.findById(tokenData?._id)
+		if (!user) throw new CustomError("No user found")
+
+		if (!user.otpSecret)
+			throw new CustomError("No request for password reset found")
+
+		const isValid = verifyTotp(user?.otpSecret, otp)
+		if (!isValid && !isValid?.success)
+			throw new CustomError(
+				isValid?.message || "Invalid OTP, please try again!"
+			)
+
+		if (new_password !== compare_password)
+			throw new CustomError("Passwords do not match")
+
+		const passwordHash = await hashPassword(new_password)
+
+		// update the user document
+		user.password = passwordHash
+		user.updated_at = getCurrentUnix()
+		user.save()
+
+		return res
+			.status(StatusCodes.OK)
+			.send(
+				responseGenerator(
+					{},
+					StatusCodes.OK,
+					"Password updated successfully",
+					1
+				)
+			)
+	} catch (error) {
+		if (error instanceof ValidationError || error instanceof CustomError) {
+			return res
+				.status(StatusCodes.BAD_REQUEST)
+				.send(responseGenerator({}, StatusCodes.BAD_REQUEST, error.message, 0))
+		}
+		console.error(error)
+		return res
+			.status(StatusCodes.INTERNAL_SERVER_ERROR)
+			.send(
+				responseGenerator(
+					{},
+					StatusCodes.INTERNAL_SERVER_ERROR,
+					"Internal Server Error",
+					0
+				)
+			)
+	}
+}
 
 // login
 // method: POST

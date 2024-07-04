@@ -1,24 +1,17 @@
 import { StatusCodes } from "http-status-codes"
 import { ValidationError } from "joi/lib/errors.js"
 import { CustomError } from "../../helpers/custom_error.js"
-import { responseGenerator } from "../../helpers/index.js"
+import { decryptData, responseGenerator } from "../../helpers/index.js"
+import { verifyJwt } from "../../helpers/jwt_helper.js"
 import UserModel from "../../models/UserModel.js"
 
-// verify user
-export const verifyUser = async (req, res, next) => {
+export const datAuth = async (req, res, next) => {
 	try {
-		const { role, _id: tokenUserId } = req?.tokenData || {}
-		const requestUserId = req.body?._id || req.params?.id
+		const reqIdUser = req?.body?._id ?? req?.params?.id
 
-		const userData = await UserModel.findById(tokenUserId).lean().exec()
-
-		if (requestUserId && role === "USER" && tokenUserId !== requestUserId) {
-			throw new CustomError("UNAUTHORIZED")
-		}
-
-		req.user = userData
-
-		next()
+		const isValid =
+			tokenData?.role === "ADMIN" ||
+			(["USER"].includes(tokenData?.role) && reqIdUser === tokenData?._id)
 	} catch (error) {
 		if (error instanceof ValidationError || error instanceof CustomError) {
 			return res
@@ -39,12 +32,24 @@ export const verifyUser = async (req, res, next) => {
 	}
 }
 
-// verify admin
-export const verifyAdmin = async (req, res, next) => {
+export const validateJwtToken = async (req, res, next) => {
 	try {
-		const isValid = ["ADMIN"].includes(req?.tokenData?.role)
+		const encToken = req?.cookies?.userToken ?? req?.cookies?.adminToken
 
-		if (!isValid) throw new CustomError("Protected route, only for admins")
+		if (!encToken) {
+			throw new CustomError("Token not provided")
+		}
+
+		const token = decryptData(encToken)
+
+		// validate token
+		const tokenData = await verifyJwt(token)
+		if (!tokenData) throw new CustomError("Token verification failed")
+
+		const user = await UserModel.findById(tokenData?._id).lean().exec()
+		if (!user) throw new CustomError("User does not exist")
+
+		req.tokenData = tokenData
 
 		next()
 	} catch (error) {

@@ -2,29 +2,26 @@ import { Router } from "express"
 import {
 	createNewUser,
 	deleteUser,
+	generateForgetPasswordRequest,
 	getUser,
 	loginUser,
 	updateUser,
+	validateForgetPasswordRequest,
 } from "../controllers/user/index.js"
+import { validateJwtToken } from "../middleware/auth/dataAuth.js"
 import { verifyUser } from "../middleware/auth/index.js"
 
 const userRouter = Router()
-
-// create
-// method: POST
-// url: /api/user
-userRouter.post("/", createNewUser)
 
 // login
 // method: POST
 // url: /api/user/login
 userRouter.post("/login", loginUser)
 
-// forget password
-
-// using the auth middleware to make sure user is logged in first
-userRouter.use(verifyUser)
-
+// create
+// method: POST
+// url: /api/user
+// ------------------
 // update
 // method: PUT
 // url: /api/user
@@ -32,11 +29,25 @@ userRouter.use(verifyUser)
 // delete
 // method: DELETE
 // url: /api/user
-userRouter.route("/").put(updateUser).delete(deleteUser)
+userRouter
+	.route("/")
+	.post(createNewUser)
+	.put(validateJwtToken, verifyUser, updateUser)
+	.delete(validateJwtToken, verifyUser, deleteUser)
 
 // user_info
 // method: GET
 // url: /api/user/:id
 userRouter.get("/:id", getUser)
+
+// forget password := 1
+// method: POST
+// url: /api/user/forgetPassword
+userRouter.post("/forgetPassword", generateForgetPasswordRequest)
+
+// forget password := 2
+// method: POST
+// url: /api/user/resetPassword
+userRouter.post("/resetPassword", validateForgetPasswordRequest)
 
 export default userRouter

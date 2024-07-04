@@ -8,12 +8,12 @@ const BookSchema = new mongoose.Schema({
 		required: true,
 	},
 	lastReadPage: { type: Number, default: 0 },
+	lastReadAt: { type: String },
 	bookPath: { type: String },
 	thumbnail: { type: String },
 	created_by: { type: String },
 	created_at: { type: String },
 	updated_at: { type: String },
-	isDeleted: { type: Boolean, default: false },
 })
 
 const BookModel = mongoose.model("books", BookSchema)

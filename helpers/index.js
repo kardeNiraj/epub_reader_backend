@@ -6,8 +6,8 @@ import { nanoid } from "nanoid"
 const key = Buffer.from(process.env.ENCRYPTION_SECRET, "hex")
 const iv = Buffer.from(process.env.IV, "hex")
 
-export const generateSecret = () => {
-	return crypto.randomBytes(16).toString("hex")
+export const generateSecret = (bytes) => {
+	return crypto.randomBytes(bytes).toString("hex")
 }
 
 export const generatePublicId = () => {

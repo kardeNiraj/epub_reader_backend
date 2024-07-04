@@ -1,19 +1,3 @@
-export function responseGenerators(
-	responseData,
-	responseStatusCode,
-	responseStatusMsg,
-	responseStatus
-) {
-	const responseJson = {
-		data: responseData,
-		code: responseStatusCode,
-		message: responseStatusMsg,
-		status: responseStatus,
-		timestamp: new Date(),
-	}
-	return responseJson
-}
-
 export const generatePassword = async () => {
 	return new Promise((resolve) => {
 		const length = 8
@@ -32,11 +16,11 @@ export const generatePassword = async () => {
 
 export const paginate = (options) => {
 	const sort = {}
-	if (options.sort_column) {
-		const sortColumn = options.sort_column
+	if (options?.sort_column) {
+		const sortColumn = options?.sort_column
 		const order =
-			(options && options.sort_order === "1") ||
-			(options && options.sort_order == "asc")
+			(options && options?.sort_order === "1") ||
+			(options && options?.sort_order == "asc")
 				? 1
 				: -1
 		sort[sortColumn] = order
@@ -46,6 +30,6 @@ export const paginate = (options) => {
 
 	const limit = +options?.limit ? +options?.limit : 10
 	const offset =
-		((+options.offset ? +options.offset : 1) - 1) * (+limit ? +limit : 10)
+		((+options?.offset ? +options?.offset : 1) - 1) * (+limit ? +limit : 10)
 	return { sort, offset, limit }
 }
