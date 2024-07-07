@@ -10,12 +10,14 @@ import userRouter from "./routes/user.js"
 const app = express()
 const server = http.Server(app)
 
-app.use(
-	cors({
-		origin: "*",
-		credentials: true,
-	})
-)
+const corsOptions = {
+	origin: "*",
+	methods: "GET,POST,PUT,DELETE,OPTIONS",
+	allowedHeaders: "Content-Type, Authorization",
+	credentials: true,
+}
+
+app.use(cors(corsOptions))
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
