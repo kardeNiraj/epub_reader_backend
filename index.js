@@ -24,6 +24,19 @@ app.use(express.json())
 app.use(cookieParser())
 app.use("/files", express.static("files"))
 
+app.use((req, res, next) => {
+	try {
+		// set header for swagger.
+		res.setHeader(
+			"Content-Security-Policy",
+			"default-src 'self'; font-src 'self'; img-src 'self'; script-src 'self'; style-src 'self'; frame-src 'self';"
+		)
+	} catch (error) {
+		console.log("error while setting header: " + error)
+	}
+	next()
+})
+
 app.get("/", (req, res) => {
 	return res.send("server is ready to serve!")
 })
