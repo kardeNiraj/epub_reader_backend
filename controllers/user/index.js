@@ -182,11 +182,11 @@ export const loginUser = async (req, res) => {
 		const encToken = encryptData(token)
 
 		// set cookie
-		res.cookie("userToken", encToken, {
-			httpOnly: true,
-			sameSite: "strict",
-			maxAge: 24 * 60 * 60 * 1000,
-		})
+		// res.cookie("userToken", encToken, {
+		// 	httpOnly: true,
+		// 	sameSite: "strict",
+		// 	maxAge: 24 * 60 * 60 * 1000,
+		// })
 
 		// success message
 		return res
