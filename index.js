@@ -1,7 +1,9 @@
+import bodyParser from "body-parser"
 import cookieParser from "cookie-parser"
 import cors from "cors"
 import "dotenv/config.js"
 import express from "express"
+import helmet from "helmet"
 import http from "http"
 import { mongooseConnection } from "./helpers/mongodb_helper.js"
 import bookRouter from "./routes/book.js"
@@ -18,6 +20,9 @@ const corsOptions = {
 }
 
 app.use(cors(corsOptions))
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
+app.use(helmet())
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
