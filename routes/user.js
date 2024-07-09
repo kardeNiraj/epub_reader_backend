@@ -4,6 +4,7 @@ import {
 	deleteUser,
 	generateForgetPasswordRequest,
 	getUser,
+	isSessionActive,
 	loginUser,
 	updateUser,
 	validateForgetPasswordRequest,
@@ -12,6 +13,11 @@ import { validateJwtToken } from "../middleware/auth/dataAuth.js"
 import { verifyUser } from "../middleware/auth/index.js"
 
 const userRouter = Router()
+
+// isSessionActive
+// method: GET
+// url: /api/user/status
+userRouter.get("/status", validateJwtToken, verifyUser, isSessionActive)
 
 // login
 // method: POST

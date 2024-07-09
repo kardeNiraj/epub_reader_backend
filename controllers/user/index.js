@@ -1,7 +1,10 @@
 import { StatusCodes } from "http-status-codes"
 import { ValidationError } from "joi/lib/errors.js"
 import { CustomError } from "../../helpers/custom_error.js"
-import { getCurrentUnix } from "../../helpers/date_time_helper.js"
+import {
+	getCurrentUnix,
+	getJwtExpiration,
+} from "../../helpers/date_time_helper.js"
 import { mailHandler } from "../../helpers/email.js"
 import {
 	comparePassword,
@@ -176,7 +179,11 @@ export const loginUser = async (req, res) => {
 			throw new CustomError(`Credentials do not match, please try again!`)
 
 		// generate a token
-		const token = getJwt({ _id: userData?._id, role: userData?.role })
+		const token = getJwt({
+			_id: userData?._id,
+			role: userData?.role,
+			expAt: getJwtExpiration(),
+		})
 
 		// encrypt the token
 		const encToken = encryptData(token)
@@ -443,4 +450,12 @@ export const getUser = async (req, res) => {
 				)
 			)
 	}
+}
+
+export const isSessionActive = async (req, res) => {
+	return res
+		.status(StatusCodes.OK)
+		.send(
+			responseGenerator({ isSessionActive: true }, StatusCodes.OK, "Success", 1)
+		)
 }
