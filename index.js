@@ -12,14 +12,7 @@ import userRouter from "./routes/user.js"
 const app = express()
 const server = http.Server(app)
 
-const corsOptions = {
-	origin: "*",
-	methods: "GET,POST,PUT,DELETE,OPTIONS",
-	allowedHeaders: "Content-Type, Authorization",
-	credentials: true,
-}
-
-app.use(cors(corsOptions))
+app.use(cors())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(helmet())
