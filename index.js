@@ -47,13 +47,13 @@ app.use("/api/quote", quoteRouter)
 // CHRON JOBS --------------------------------------------------------------------
 
 // update the quote of the day at 00:00:00 everyday.
-// const fetchQuoteOfTheDay = new CronJob(
-// 	"0 0 0 * * *",
-// 	fetchQuote(),
-// 	null,
-// 	true,
-// 	"Asia/Kolkata"
-// )
+const fetchQuoteOfTheDay = new CronJob(
+	"0 0 0 * * *",
+	fetchQuote(),
+	null,
+	true,
+	"Asia/Kolkata"
+)
 
 // -------------------------------------------------------------------------------
 
