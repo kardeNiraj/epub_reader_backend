@@ -7,6 +7,7 @@ import helmet from "helmet"
 import http from "http"
 import { mongooseConnection } from "./helpers/mongodb_helper.js"
 import bookRouter from "./routes/book.js"
+import quoteRouter from "./routes/quote.js"
 import userRouter from "./routes/user.js"
 
 const app = express()
@@ -41,15 +42,27 @@ app.get("/", (req, res) => {
 
 app.use("/api/user", userRouter)
 app.use("/api/book", bookRouter)
+app.use("/api/quote", quoteRouter)
+
+// CHRON JOBS --------------------------------------------------------------------
+
+// update the quote of the day at 00:00:00 everyday.
+// const fetchQuoteOfTheDay = new CronJob(
+// 	"0 0 0 * * *",
+// 	fetchQuote(),
+// 	null,
+// 	true,
+// 	"Asia/Kolkata"
+// )
+
+// -------------------------------------------------------------------------------
 
 // running the server
 try {
 	const port = process.env.PORT || 8010
 	const db = await mongooseConnection()
 	if (db) {
-		console.log(
-			`📅 database connected https://cloud.mongodb.com/v2/666c8df2ca5ba457f69053f8#/overview`
-		)
+		console.log(`📅 database connected...`)
 		server.listen(port, () => {
 			console.log(`👍 server started successfully http://localhost:${port}`)
 		})
