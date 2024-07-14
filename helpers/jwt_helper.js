@@ -16,7 +16,7 @@ export function getJwt(data, options = {}) {
 export async function verifyJwt(authorization) {
 	try {
 		const token = await verify(authorization, process.env.JWT_SECRET_KEY)
-		console.log(token)
+		// console.log(token)
 		return token
 	} catch (error) {
 		console.log("------------------------------------------------------------")

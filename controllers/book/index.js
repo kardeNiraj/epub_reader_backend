@@ -20,7 +20,7 @@ export const createBook = async (req, res) => {
 		if (!file) throw new CustomError("No book was sent")
 
 		const newBook = {
-			name: file?.originalname,
+			name: file?.originalname?.replace(/\.(epub|zip)$/, ""),
 			bookPath: file?.path,
 			created_at: getCurrentUnix(),
 			updated_at: getCurrentUnix(),

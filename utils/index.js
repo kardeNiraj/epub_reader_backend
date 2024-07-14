@@ -33,3 +33,24 @@ export const paginate = (options) => {
 		((+options?.offset ? +options?.offset : 1) - 1) * (+limit ? +limit : 10)
 	return { sort, offset, limit }
 }
+
+export const profileImageOptions = [
+	"Oscar",
+	"Abby",
+	"Leo",
+	"Lucky",
+	"Bear",
+	"Cali",
+	"Cleo",
+	"Ginger",
+	"Lily",
+	"Maggie",
+	"Lilly",
+	"Boots",
+	"Cookie",
+	"Kiki",
+	"Jasper",
+	"Angel",
+	"Mia",
+	"Fluffy",
+]

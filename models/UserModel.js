@@ -20,6 +20,10 @@ const UserSchema = new mongoose.Schema({
 	password: {
 		type: String,
 	},
+	profileImage: {
+		type: String,
+		required: true,
+	},
 	otpSecret: {
 		type: Object,
 		default: null,

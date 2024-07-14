@@ -17,7 +17,7 @@ export const validateJwtToken = async (req, res, next) => {
 		}
 
 		const token = decryptData(encToken)
-		console.log("token in validateJwtToken: " + token)
+		// console.log("token in validateJwtToken: " + token)
 
 		// validate token
 		const tokenData = await verifyJwt(token)

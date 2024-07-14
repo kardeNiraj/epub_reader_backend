@@ -17,6 +17,7 @@ import {
 import { getJwt, verifyJwt } from "../../helpers/jwt_helper.js"
 import { generateTOTP, verifyTotp } from "../../helpers/totp.js"
 import UserModel from "../../models/UserModel.js"
+import { profileImageOptions } from "../../utils/index.js"
 import {
 	createUserValidation,
 	deleteUserValidation,
@@ -259,8 +260,15 @@ export const createNewUser = async (req, res) => {
 		// create user
 		const hashedPass = await hashPassword(req?.body?.password, 10)
 
+		const profileImage = `https://api.dicebear.com/9.x/adventurer/svg?seed=${
+			profileImageOptions[
+				Math.floor(Math.random() * profileImageOptions.length)
+			]
+		}`
+
 		let newUser = await UserModel.create({
 			...req.body,
+			profileImage,
 			password: hashedPass,
 			created_at: getCurrentUnix(),
 			updated_at: getCurrentUnix(),
@@ -456,6 +464,11 @@ export const isSessionActive = async (req, res) => {
 	return res
 		.status(StatusCodes.OK)
 		.send(
-			responseGenerator({ isSessionActive: true }, StatusCodes.OK, "Success", 1)
+			responseGenerator(
+				{ user: req?.user, isSessionActive: true },
+				StatusCodes.OK,
+				"Success",
+				1
+			)
 		)
 }
