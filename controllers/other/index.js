@@ -4,16 +4,16 @@ import QuoteModel from "../../models/QuoteModel.js"
 
 export const fetchQuote = async () => {
 	try {
-		const startOfToday = dayjs().startOf("day").toDate()
-		const endOfToday = dayjs().endOf("day").toDate()
-		const previousQuote = await QuoteModel.find({
+		const startOfToday = dayjs().startOf("day").unix()
+		const endOfToday = dayjs().endOf("day").unix()
+		const countOfTodayQuotes = await QuoteModel.countDocuments({
 			created_at: {
 				$gte: startOfToday,
 				$lte: endOfToday,
 			},
 		})
 
-		if (previousQuote) {
+		if (countOfTodayQuotes > 0) {
 			console.log("Already generated a quote for today")
 			return
 		}
