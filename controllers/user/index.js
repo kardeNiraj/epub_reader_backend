@@ -238,20 +238,32 @@ export const createNewUser = async (req, res) => {
 		// check if user already available
 		const isAvailable = await UserModel.findOne({
 			$or: [{ email: req?.body?.email }, { phone: req?.body?.phone }],
-			// isDeleted: false,
 		})
 
 		if (isAvailable) {
-			isAvailable.isDeleted = false
-			isAvailable.updated_at = getCurrentUnix()
-			isAvailable.save()
+			if(isAvailable.isDeleted == true) {
+				isAvailable.isDeleted = false
+				isAvailable.updated_at = getCurrentUnix()
+				isAvailable.save()
+				return res
+					.status(StatusCodes.OK)
+					.send(
+						responseGenerator(
+							{ _id: isAvailable._id, loginCompleted: false },
+							StatusCodes.OK,
+							"Deleted user recovered",
+							1
+						)
+					)
+			}
+
 			return res
 				.status(StatusCodes.OK)
 				.send(
 					responseGenerator(
 						{ _id: isAvailable._id, loginCompleted: false },
 						StatusCodes.OK,
-						"Deleted user recovered",
+						"User already exists, please login!",
 						1
 					)
 				)
